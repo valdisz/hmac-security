@@ -37,10 +37,11 @@
             var appId = ch.HeaderValue(XAppId);
             var nonce = ch.HeaderValue(XNonce);
             var secret = appSecretRepository.GetSecret(appId);
-            ch.Unless(() => !string.IsNullOrWhiteSpace(secret));
-            ch.Unless(() => rawAuth.Count == 2);
-            ch.Unless(() => string.Equals(Schema, rawAuth[0], StringComparison.OrdinalIgnoreCase));
-            ch.Unless(() => !string.IsNullOrWhiteSpace(rawAuth[1]));
+
+            ch.Unless(!string.IsNullOrWhiteSpace(secret));
+            ch.Unless(rawAuth.Count == 2);
+            ch.Unless(string.Equals(Schema, rawAuth[0], StringComparison.OrdinalIgnoreCase));
+            ch.Unless(!string.IsNullOrWhiteSpace(rawAuth[1]));
 
             if (ch.Challenged)
             {
@@ -48,7 +49,7 @@
                 return;
             }
 
-            List<string> signingParts = new List<string>
+            List<string> content = new List<string>
             {
                 nonce,
                 appId,
@@ -59,14 +60,15 @@
                 Encoding.UTF8.GetString(hashingAlgorithm.ComputeHash(req.Body))
             };
 
+            byte[] contentBytes = Encoding.UTF8.GetBytes(string.Join("", content));
             byte[] secretBytes = Encoding.UTF8.GetBytes(secret);
-            byte[] contentBytes = Encoding.UTF8.GetBytes(string.Join("", signingParts));
 
-            string requestSignature = rawAuth[1];
             byte[] computedSignatureBytes = signingAlgorithm.Sign(secretBytes, contentBytes);
             var computedSignature = Convert.ToBase64String(computedSignatureBytes);
+            string requestSignature = rawAuth[1];
 
-            ch.Unless(() => requestSignature == computedSignature);
+            ch.Unless(requestSignature == computedSignature);
+
             if (ch.Challenged)
             {
                 ch.WriteChallengeResponse();

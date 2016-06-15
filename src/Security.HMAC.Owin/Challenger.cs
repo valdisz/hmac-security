@@ -17,14 +17,14 @@ namespace Security.HMAC
             this.response = response;
         }
 
-        public void Unless(Func<bool> condition)
+        public void Unless(bool condition)
         {
-            Challenged |= !condition();
+            Challenged |= !condition;
         }
 
-        public void When(Func<bool> condition)
+        public void When(bool condition)
         {
-            Challenged |= condition();
+            Challenged |= condition;
         }
 
         public string HeaderValue(string name)
