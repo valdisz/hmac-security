@@ -1,7 +1,9 @@
 namespace Security.HMAC
 {
+    using System.Security;
+
     public interface IAppSecretRepository
     {
-        string GetSecret(string appId);
+        SecureString GetSecret(string appId);
     }
 }

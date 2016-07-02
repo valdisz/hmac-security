@@ -9,6 +9,10 @@
         "Microsoft.Owin": "3.0.0"
     },
 
+    "buildOptions": {
+        "allowUnsafe": true
+    },
+
     "frameworks": {
         "net45": { },
         "net451": { },

@@ -37,11 +37,11 @@
             var auth       = ch.EnsureHeaderValues("Authentication");
             var appId      = ch.EnsureHeaderValue(XAppId);
             var nonce      = ch.EnsureHeaderValue(XNonce);
-            var secret     = appSecretRepository.GetSecret(appId);
             var authSchema = auth.Count == 2 ? auth[0] : null;
             var authValue  = auth.Count == 2 ? auth[1] : null;
+            var secret     = appSecretRepository.GetSecret(appId);
 
-            ch.Unless(!string.IsNullOrWhiteSpace(secret));
+            ch.Unless(secret != null);
             ch.Unless(string.Equals(Schema, authSchema, StringComparison.OrdinalIgnoreCase));
             ch.Unless(!string.IsNullOrWhiteSpace(authValue));
 
@@ -59,7 +59,7 @@
                 };
 
                 byte[] contentBytes = Encoding.UTF8.GetBytes(string.Join("", content));
-                byte[] secretBytes = Encoding.UTF8.GetBytes(secret);
+                byte[] secretBytes = secret.ToByteArray(Encoding.UTF8);
 
                 byte[] signatureBytes = signingAlgorithm.Sign(secretBytes, contentBytes);
                 var signature = Convert.ToBase64String(signatureBytes);
