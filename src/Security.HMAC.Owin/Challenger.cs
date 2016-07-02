@@ -9,7 +9,7 @@ namespace Security.HMAC
         private readonly IOwinRequest request;
         private readonly IOwinResponse response;
 
-        public bool Challenged { get; private set; }
+        public bool ShouldChallenge { get; private set; }
 
         public Challenger(IOwinRequest request, IOwinResponse response)
         {
@@ -19,30 +19,30 @@ namespace Security.HMAC
 
         public void Unless(bool condition)
         {
-            Challenged |= !condition;
+            ShouldChallenge |= !condition;
         }
 
         public void When(bool condition)
         {
-            Challenged |= condition;
+            ShouldChallenge |= condition;
         }
 
-        public string HeaderValue(string name)
+        public string EnsureHeaderValue(string name)
         {
             if (!request.Headers.ContainsKey(name))
             {
-                Challenged = true;
+                ShouldChallenge = true;
                 return null;
             }
 
             return request.Headers[name];
         }
 
-        public IList<string> HeaderValues(string name)
+        public IList<string> EnsureHeaderValues(string name)
         {
             if (!request.Headers.ContainsKey(name))
             {
-                Challenged = true;
+                ShouldChallenge = true;
                 return new string[0];
             }
 

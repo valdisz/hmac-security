@@ -8,7 +8,7 @@
 
     public class HmacMiddleware : OwinMiddleware
     {
-        public const string XAppId = "X-HMAC-App-Id";
+        public const string XAppId = "X-HMAC-AppId";
         public const string XNonce = "X-HMAC-Nonce";
         public const string Schema = "HMAC";
 
@@ -33,49 +33,44 @@
             var res = context.Response;
 
             Challenger ch = new Challenger(req, res);
-            var rawAuth = ch.HeaderValues("Authentication");
-            var appId = ch.HeaderValue(XAppId);
-            var nonce = ch.HeaderValue(XNonce);
-            var secret = appSecretRepository.GetSecret(appId);
+
+            var auth       = ch.EnsureHeaderValues("Authentication");
+            var appId      = ch.EnsureHeaderValue(XAppId);
+            var nonce      = ch.EnsureHeaderValue(XNonce);
+            var secret     = appSecretRepository.GetSecret(appId);
+            var authSchema = auth.Count == 2 ? auth[0] : null;
+            var authValue  = auth.Count == 2 ? auth[1] : null;
 
             ch.Unless(!string.IsNullOrWhiteSpace(secret));
-            ch.Unless(rawAuth.Count == 2);
-            ch.Unless(string.Equals(Schema, rawAuth[0], StringComparison.OrdinalIgnoreCase));
-            ch.Unless(!string.IsNullOrWhiteSpace(rawAuth[1]));
+            ch.Unless(string.Equals(Schema, authSchema, StringComparison.OrdinalIgnoreCase));
+            ch.Unless(!string.IsNullOrWhiteSpace(authValue));
 
-            if (ch.Challenged)
+            if (!ch.ShouldChallenge)
             {
-                ch.WriteChallengeResponse();
-                return;
+                List<string> content = new List<string>
+                {
+                    nonce,
+                    appId,
+                    req.Method,
+                    req.Protocol,
+                    req.ContentType,
+                    req.Uri.ToString(),
+                    Encoding.UTF8.GetString(hashingAlgorithm.ComputeHash(req.Body))
+                };
+
+                byte[] contentBytes = Encoding.UTF8.GetBytes(string.Join("", content));
+                byte[] secretBytes = Encoding.UTF8.GetBytes(secret);
+
+                byte[] signatureBytes = signingAlgorithm.Sign(secretBytes, contentBytes);
+                var signature = Convert.ToBase64String(signatureBytes);
+
+                ch.Unless(authValue == signature);
             }
 
-            List<string> content = new List<string>
-            {
-                nonce,
-                appId,
-                req.Method,
-                req.Protocol,
-                req.ContentType,
-                req.Uri.ToString(),
-                Encoding.UTF8.GetString(hashingAlgorithm.ComputeHash(req.Body))
-            };
-
-            byte[] contentBytes = Encoding.UTF8.GetBytes(string.Join("", content));
-            byte[] secretBytes = Encoding.UTF8.GetBytes(secret);
-
-            byte[] computedSignatureBytes = signingAlgorithm.Sign(secretBytes, contentBytes);
-            var computedSignature = Convert.ToBase64String(computedSignatureBytes);
-            string requestSignature = rawAuth[1];
-
-            ch.Unless(requestSignature == computedSignature);
-
-            if (ch.Challenged)
-            {
+            if (ch.ShouldChallenge)
                 ch.WriteChallengeResponse();
-                return;
-            }
-
-            await Next.Invoke(context);
+            else
+                await Next.Invoke(context);
         }
     }
 }
