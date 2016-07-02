@@ -13,8 +13,10 @@
         "net45": { },
         "net451": { },
         "net452": { },
-        "net46": { }
+        "net46": { },
+        "net461": { }
     },
+
     "packOptions": {
         "owners": [
             "Valdis Zobēla"
