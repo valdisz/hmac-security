@@ -2,7 +2,7 @@ namespace Security.HMAC
 {
     using System;
 
-    internal static class Headers
+    public static class Headers
     {
         public const string Authorization = "Authorization";
         public const string WWWAuthenticate = "WWW-Authenticate";
@@ -17,7 +17,7 @@ namespace Security.HMAC
         public const string HMAC = "HMAC";
     }
 
-    public static class Constants
+    internal static class Constants
     {
         public static readonly TimeSpan DefaultTolerance = TimeSpan.FromSeconds(3);
     }

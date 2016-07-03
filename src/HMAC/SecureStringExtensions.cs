@@ -10,6 +10,11 @@ namespace Security.HMAC
     {
         public static SecureString FromByteArray(this byte[] bytes, Encoding encoding)
         {
+            if (bytes == null)
+            {
+                return null;
+            }
+
             return encoding
                 .GetChars(bytes)
                 .Aggregate(new SecureString(), AppendChar, MakeReadOnly);
@@ -17,6 +22,11 @@ namespace Security.HMAC
 
         public static unsafe byte[] ToByteArray(this SecureString secStr, Encoding encoding)
         {
+            if (secStr == null)
+            {
+                return new byte[0];
+            }
+
             int strLen = secStr.Length;
 
             IntPtr bytes = IntPtr.Zero;
@@ -49,7 +59,9 @@ namespace Security.HMAC
 
         public static SecureString ToSecureString(this string str)
         {
-            return str.Aggregate(new SecureString(), AppendChar, MakeReadOnly);
+            return str == null
+                ? null
+                : str.Aggregate(new SecureString(), AppendChar, MakeReadOnly);
         }
 
         private static SecureString AppendChar(SecureString ss, char c)

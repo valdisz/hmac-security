@@ -3,15 +3,17 @@ namespace Security.HMAC
     using System;
     using System.Linq;
 
-    public class CannonicalRepresentationBuilder
+    internal sealed class CannonicalRepresentationBuilder
     {
+        private static readonly DateTimeOffset dt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
+
         public string BuildRepresentation(
             string nonce,
             string appId,
             string method,
             string contentType,
             byte[] contentMD5,
-            DateTimeOffset time,
+            DateTimeOffset date,
             Uri uri)
         {
             string[] content =
@@ -20,7 +22,7 @@ namespace Security.HMAC
                 appId,
                 method,
                 contentType,
-                time.ToUniversalTime().ToUnixTimeSeconds().ToString(),
+                Convert.ToInt64(date.Subtract(dt).TotalSeconds).ToString(),
                 uri.ToString().ToLowerInvariant()
             };
 

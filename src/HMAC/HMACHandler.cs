@@ -8,7 +8,7 @@ namespace Security.HMAC
     using System.Threading;
     using System.Threading.Tasks;
 
-    public sealed class HMACHandler : DelegatingHandler
+    public abstract class HMACHandler : DelegatingHandler
     {
         private readonly TimeSpan tolerance;
         private readonly IAppSecretRepository appSecretRepository;
@@ -24,7 +24,9 @@ namespace Security.HMAC
             this.tolerance = tolerance ?? Constants.DefaultTolerance;
         }
 
-        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected async Task<HttpResponseMessage> SendAuthorizedAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
             var req = request;
             var h = req.Headers;
@@ -68,5 +70,13 @@ namespace Security.HMAC
                 }
             };
         }
+
+        protected Task<HttpResponseMessage> SendUnauthorizedAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken) => base.SendAsync(request, cancellationToken);
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request,
+            CancellationToken cancellationToken) => SendAuthorizedAsync(request, cancellationToken);
     }
 }
