@@ -8,6 +8,13 @@ namespace Security.HMAC
 
     public static class SecureStringExtensions
     {
+        public static SecureString FromByteArray(this byte[] bytes, Encoding encoding)
+        {
+            return encoding
+                .GetChars(bytes)
+                .Aggregate(new SecureString(), AppendChar, MakeReadOnly);
+        }
+
         public static unsafe byte[] ToByteArray(this SecureString secStr, Encoding encoding)
         {
             int strLen = secStr.Length;
@@ -26,6 +33,10 @@ namespace Security.HMAC
 
                 byte[] arr = new byte[len];
                 Marshal.Copy((IntPtr) bptr, arr, 0, len);
+
+                // zero buffers
+                Zero((IntPtr)chars, strLen);
+                Zero((IntPtr)bptr, len);
 
                 return arr;
             }
@@ -51,6 +62,14 @@ namespace Security.HMAC
         {
             ss.MakeReadOnly();
             return ss;
+        }
+
+        private static void Zero(IntPtr ptr, int len)
+        {
+            for (int i = 0; i < len; i++)
+            {
+                Marshal.WriteByte(ptr, i, 0);
+            }
         }
     }
 }

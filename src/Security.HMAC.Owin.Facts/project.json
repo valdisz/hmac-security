@@ -1,0 +1,29 @@
+﻿{
+    "title": "HMAC Authentication (facts)",
+    "version": "1.0.0-*",
+    "authors": [
+        "Valdis Zobēla"
+    ],
+
+    "buildOptions": {
+        "allowUnsafe": true
+    },
+
+    "frameworks": {
+        "net46": {
+            "frameworkAssemblies": {
+                "System.Runtime": "4.*"
+            },
+            "dependencies": {
+                "Microsoft.Owin": "3.0.0",
+                "xunit": "2.2.0-beta2-build3300",
+                "xunit.core": "2.2.0-beta2-build3300",
+                "xunit.runner.visualstudio": "2.2.0-beta2-build1149",
+            }
+        }
+    },
+
+    "dependencies": {
+        "Security.HMAC.Owin": "1.0.0-*"
+    }
+}
