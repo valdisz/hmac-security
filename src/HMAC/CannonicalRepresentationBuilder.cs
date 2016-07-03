@@ -10,7 +10,8 @@ namespace Security.HMAC
             string appId,
             string method,
             string contentType,
-            string contentMD5,
+            byte[] contentMD5,
+            DateTimeOffset time,
             Uri uri)
         {
             string[] content =
@@ -19,6 +20,7 @@ namespace Security.HMAC
                 appId,
                 method,
                 contentType,
+                time.ToUniversalTime().ToUnixTimeSeconds().ToString(),
                 uri.ToString().ToLowerInvariant()
             };
 
@@ -27,7 +29,8 @@ namespace Security.HMAC
                 return null;
             }
 
-            return string.Join("|", content) + $"|{contentMD5}";
+            string md5 = Convert.ToBase64String(contentMD5);
+            return string.Join("|", content) + $"|{md5}";
         }
     }
 }

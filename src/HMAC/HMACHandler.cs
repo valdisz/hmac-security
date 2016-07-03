@@ -1,24 +1,27 @@
 namespace Security.HMAC
 {
+    using System;
     using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Security;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     public sealed class HMACHandler : DelegatingHandler
     {
+        private readonly TimeSpan tolerance;
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
 
         public HMACHandler(
             IAppSecretRepository appSecretRepository,
-            ISigningAlgorithm signingAlgorithm)
+            ISigningAlgorithm signingAlgorithm,
+            TimeSpan? tolerance = null)
         {
             this.appSecretRepository = appSecretRepository;
             this.signingAlgorithm = signingAlgorithm;
+            this.tolerance = tolerance ?? Constants.DefaultTolerance;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -29,8 +32,12 @@ namespace Security.HMAC
             var appId = h.GetValues(Headers.XAppId).First();
             var authSchema = h.Authorization?.Scheme;
             var authValue = h.Authorization?.Parameter;
+            var date = h.Date ?? DateTimeOffset.MinValue;
 
-            if (appId != null && authSchema == Schemas.HMAC && authValue != null)
+            if (appId != null
+                && authSchema == Schemas.HMAC
+                && authValue != null
+                && DateTimeOffset.UtcNow - date <= tolerance)
             {
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
@@ -38,7 +45,8 @@ namespace Security.HMAC
                     appId,
                     req.Method.Method,
                     req.Content.Headers.ContentType.MediaType,
-                    Encoding.UTF8.GetString(req.Content.Headers.ContentMD5),
+                    req.Content.Headers.ContentMD5,
+                    date,
                     req.RequestUri);
 
                 SecureString secret;

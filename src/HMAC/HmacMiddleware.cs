@@ -1,5 +1,6 @@
 ﻿namespace Security.HMAC
 {
+    using System;
     using System.Security;
     using System.Threading.Tasks;
     using Microsoft.Owin;
@@ -8,14 +9,17 @@
     {
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
+        private readonly TimeSpan tolerance;
 
         public HMACMiddleware(
             IAppSecretRepository appSecretRepository,
             ISigningAlgorithm signingAlgorithm,
-            OwinMiddleware next) : base(next)
+            OwinMiddleware next,
+            TimeSpan? tolerance = null) : base(next)
         {
             this.appSecretRepository = appSecretRepository;
             this.signingAlgorithm = signingAlgorithm;
+            this.tolerance = tolerance ?? Constants.DefaultTolerance;
         }
 
         public override async Task Invoke(IOwinContext context)
@@ -28,8 +32,15 @@
             var auth = h.Get(Headers.Authorization)?.Split(' ');
             var authSchema = auth?.Length == 2 ? auth[0] : null;
             var authValue = auth?.Length == 2 ? auth[1] : null;
+            DateTimeOffset date =
+                DateTimeOffset.TryParse(h.Get(Headers.Date), out date)
+                    ? date
+                    : DateTimeOffset.MinValue;
 
-            if (appId != null && authSchema == Schemas.HMAC && authValue != null)
+            if (appId != null
+                && authSchema == Schemas.HMAC
+                && authValue != null
+                && DateTimeOffset.UtcNow - date <= tolerance)
             {
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
@@ -37,7 +48,8 @@
                     appId,
                     req.Method,
                     req.ContentType,
-                    h.Get(Headers.ContentMD5),
+                    Convert.FromBase64String(h.Get(Headers.ContentMD5)),
+                    date,
                     req.Uri);
 
                 SecureString secret;

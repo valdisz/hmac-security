@@ -4,7 +4,6 @@ namespace Security.HMAC
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Security;
-    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -24,6 +23,7 @@ namespace Security.HMAC
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var nonce = Guid.NewGuid().ToString("N");
+            var time = DateTimeOffset.UtcNow;
 
             var builder = new CannonicalRepresentationBuilder();
             var content = builder.BuildRepresentation(
@@ -31,7 +31,8 @@ namespace Security.HMAC
                 appId,
                 request.Method.Method,
                 request.Content.Headers.ContentType.MediaType,
-                Encoding.UTF8.GetString(request.Content.Headers.ContentMD5),
+                request.Content.Headers.ContentMD5,
+                time,
                 request.RequestUri);
 
             var signature = signingAlgorithm.Sign(secret, content);
@@ -39,6 +40,7 @@ namespace Security.HMAC
             request.Headers.Authorization = new AuthenticationHeaderValue(Schemas.HMAC, signature);
             request.Headers.Add(Headers.XAppId, appId);
             request.Headers.Add(Headers.XNonce, nonce);
+            request.Headers.Date = time;
 
             return base.SendAsync(request, cancellationToken);
         }
