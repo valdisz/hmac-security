@@ -20,12 +20,10 @@ namespace Security.HMAC
                 signatureBytes = hmac.ComputeHash(contentBytes);
             }
 
-            var signature = Convert.ToBase64String(signatureBytes);
-
             // we need to remove unencrypted secret from memory
             Array.Clear(secretBytes, 0, secretBytes.Length);
 
-            return signature;
+            return Convert.ToBase64String(signatureBytes);
         }
     }
 }
