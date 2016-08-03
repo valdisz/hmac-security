@@ -5,9 +5,9 @@ namespace Security.HMAC
     using System.Security.Cryptography;
     using System.Text;
 
-    public sealed class HMAC256SigningAlgorith : ISigningAlgorithm
+    public sealed class HMAC256SigningAlgorithm : ISigningAlgorithm
     {
-        public static readonly ISigningAlgorithm Instance = new HMAC256SigningAlgorith();
+        public static readonly ISigningAlgorithm Instance = new HMAC256SigningAlgorithm();
 
         public string Sign(SecureString secret, string content)
         {

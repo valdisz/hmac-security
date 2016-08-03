@@ -60,7 +60,7 @@
     <Compile Include="ISigningAlgorithm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SecureStringExtensions.cs" />
-    <Compile Include="HMAC256SigningAlgorith.cs" />
+    <Compile Include="HMAC256SigningAlgorithm.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
