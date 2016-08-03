@@ -18,10 +18,10 @@
 
             var secBytes = secure.ToByteArray(encoding);
 
-            Assert.Equal(true, NewMemCmp(unsecBytes, secBytes, unsecBytes.Length));
+            Assert.Equal(true, CompareMemory(unsecBytes, secBytes, unsecBytes.Length));
         }
 
-        public static unsafe bool NewMemCmp(byte* b0, byte* b1, int length)
+        public static unsafe bool CompareMemory(byte* b0, byte* b1, int length)
         {
             byte* lastAddr = b0 + length;
             byte* lastAddrMinus32 = lastAddr - 32;
@@ -43,11 +43,12 @@
             return true;
         }
 
-        public static unsafe bool NewMemCmp(byte[] arr0, byte[] arr1, int length)
+        public static unsafe bool CompareMemory(byte[] arr0, byte[] arr1, int length)
         {
-            fixed (byte* b0 = arr0) fixed (byte* b1 = arr1)
+            fixed (byte* b0 = arr0)
+            fixed (byte* b1 = arr1)
             {
-                return NewMemCmp(b0, b1, length);
+                return CompareMemory(b0, b1, length);
             }
         }
     }
