@@ -1,14 +1,14 @@
 ﻿namespace Tests
 {
-    using Security.HMAC;
     using System.Security;
     using System.Text;
+    using Security.HMAC;
     using Xunit;
 
     public class SecureStringFacts
     {
         [Fact]
-        public void converting_from_to_secure_string_proudec_correct_results()
+        public void converting_from_to_secure_string_produces_correct_results()
         {
             var encoding = Encoding.UTF8;
             string unsecure = "bar";
