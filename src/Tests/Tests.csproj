@@ -68,6 +68,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="CannonicalRepresentationBuilderFacts.cs" />
     <Compile Include="HMAC256SigningAlgorithmFacts.cs" />
     <Compile Include="SecureStringFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

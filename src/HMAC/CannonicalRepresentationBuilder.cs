@@ -7,6 +7,7 @@ namespace Security.HMAC
     {
         private static readonly DateTimeOffset dt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
 
+
         public string BuildRepresentation(
             string nonce,
             string appId,
@@ -31,8 +32,13 @@ namespace Security.HMAC
                 return null;
             }
 
-            string md5 = Convert.ToBase64String(contentMD5);
-            return string.Join("|", content) + $"|{md5}";
+            if ((contentMD5?.Length ?? 0) != 0)
+            {
+                string md5 = Convert.ToBase64String(contentMD5);
+                return string.Join("|", content) + $"|{md5}";
+            }
+
+            return string.Join("|", content);
         }
     }
 }
