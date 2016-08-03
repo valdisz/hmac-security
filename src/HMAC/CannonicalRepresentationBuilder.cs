@@ -32,13 +32,14 @@ namespace Security.HMAC
                 return null;
             }
 
+            var representation = string.Join("|", content);
             if ((contentMD5?.Length ?? 0) != 0)
             {
                 string md5 = Convert.ToBase64String(contentMD5);
-                return string.Join("|", content) + $"|{md5}";
+                representation += $"|{md5}";
             }
 
-            return string.Join("|", content);
+            return representation;
         }
     }
 }
