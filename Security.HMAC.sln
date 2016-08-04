@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facts", "Tests\Facts.csproj", "{A607775D-2BD7-49B7-8F0C-BDA3EE7B6435}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Facts", "facts\Facts.csproj", "{A607775D-2BD7-49B7-8F0C-BDA3EE7B6435}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMAC.WebAPI", "HMAC\HMAC.WebAPI.csproj", "{1949F09C-078B-4FE0-B911-BF00F03FE7EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebAPI", "src\WebAPI\WebAPI.csproj", "{1949F09C-078B-4FE0-B911-BF00F03FE7EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMAC.Owin", "HMAC.Owin\HMAC.Owin.csproj", "{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Owin", "src\Owin\Owin.csproj", "{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HMAC.Shared", "HMAC.Shared\HMAC.Shared.shproj", "{97A6436E-5181-475F-B74E-E750D6F23F75}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "src\Shared\Shared.shproj", "{97A6436E-5181-475F-B74E-E750D6F23F75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMAC.Core", "HMAC.Core\HMAC.Core.csproj", "{B65549A2-4991-424F-BD60-8E51857EF22E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "src\Core\Core.csproj", "{B65549A2-4991-424F-BD60-8E51857EF22E}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		HMAC.Shared\HMAC.Shared.projitems*{1949f09c-078b-4fe0-b911-bf00f03fe7ea}*SharedItemsImports = 4
-		HMAC.Shared\HMAC.Shared.projitems*{3f4cde5a-7667-46b1-b1c9-1d2a60a8591e}*SharedItemsImports = 4
-		HMAC.Shared\HMAC.Shared.projitems*{97a6436e-5181-475f-b74e-e750d6f23f75}*SharedItemsImports = 13
+		src\Shared\Shared.projitems*{1949f09c-078b-4fe0-b911-bf00f03fe7ea}*SharedItemsImports = 4
+		src\Shared\Shared.projitems*{3f4cde5a-7667-46b1-b1c9-1d2a60a8591e}*SharedItemsImports = 4
+		src\Shared\Shared.projitems*{97a6436e-5181-475f-b74e-e750d6f23f75}*SharedItemsImports = 13
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
