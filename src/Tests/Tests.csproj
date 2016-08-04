@@ -79,6 +79,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HMAC.Core\HMAC.Core.csproj">
+      <Project>{b65549a2-4991-424f-bd60-8e51857ef22e}</Project>
+      <Name>HMAC.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HMAC\HMAC.csproj">
       <Project>{1949f09c-078b-4fe0-b911-bf00f03fe7ea}</Project>
       <Name>HMAC</Name>

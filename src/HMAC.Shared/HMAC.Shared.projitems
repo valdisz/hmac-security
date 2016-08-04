@@ -10,12 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CannonicalRepresentationBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GuidNonceGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IAppSecretRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)INonceGenerator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ISigningAlgorithm.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ITime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SecureStringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SystemTime.cs" />
   </ItemGroup>
 </Project>
