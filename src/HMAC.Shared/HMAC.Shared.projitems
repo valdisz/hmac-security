@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>97a6436e-5181-475f-b74e-e750d6f23f75</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>HMAC.Shared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CannonicalRepresentationBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GuidNonceGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IAppSecretRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)INonceGenerator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ISigningAlgorithm.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ITime.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SystemTime.cs" />
+  </ItemGroup>
+</Project>

@@ -7,7 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMAC", "HMAC\HMAC.csproj", "{1949F09C-078B-4FE0-B911-BF00F03FE7EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HMAC.Owin", "HMAC.Owin\HMAC.Owin.csproj", "{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HMAC.Shared", "HMAC.Shared\HMAC.Shared.shproj", "{97A6436E-5181-475F-B74E-E750D6F23F75}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		HMAC.Shared\HMAC.Shared.projitems*{1949f09c-078b-4fe0-b911-bf00f03fe7ea}*SharedItemsImports = 4
+		HMAC.Shared\HMAC.Shared.projitems*{3f4cde5a-7667-46b1-b1c9-1d2a60a8591e}*SharedItemsImports = 4
+		HMAC.Shared\HMAC.Shared.projitems*{97a6436e-5181-475f-b74e-e750d6f23f75}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -21,6 +30,10 @@ Global
 		{1949F09C-078B-4FE0-B911-BF00F03FE7EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1949F09C-078B-4FE0-B911-BF00F03FE7EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1949F09C-078B-4FE0-B911-BF00F03FE7EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F4CDE5A-7667-46B1-B1C9-1D2A60A8591E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
