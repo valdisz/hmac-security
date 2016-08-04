@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)CannonicalRepresentationBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GuidNonceGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SecureStringExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SystemTime.cs" />

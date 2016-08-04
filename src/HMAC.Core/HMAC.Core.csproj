@@ -40,7 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constants.cs" />
     <Compile Include="HMAC256SigningAlgorithm.cs" />
     <Compile Include="IAppSecretRepository.cs" />
     <Compile Include="INonceGenerator.cs" />
