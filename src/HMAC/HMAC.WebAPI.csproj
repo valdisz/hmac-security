@@ -54,7 +54,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="HMAC.nuspec">
+    <None Include="HMAC.WebAPI.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
