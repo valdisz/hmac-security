@@ -57,12 +57,7 @@ namespace Security.HMAC
             }
         }
 
-        public static SecureString ToSecureString(this string str)
-        {
-            return str == null
-                ? null
-                : str.Aggregate(new SecureString(), AppendChar, MakeReadOnly);
-        }
+        public static SecureString ToSecureString(this string str) => str?.Aggregate(new SecureString(), AppendChar, MakeReadOnly);
 
         private static SecureString AppendChar(SecureString ss, char c)
         {

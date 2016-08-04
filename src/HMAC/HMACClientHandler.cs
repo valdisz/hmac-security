@@ -56,9 +56,6 @@ namespace Security.HMAC
             return request;
         }
 
-        protected override HttpResponseMessage ProcessResponse(HttpResponseMessage response, CancellationToken cancellationToken)
-        {
-            return response;
-        }
+        protected override HttpResponseMessage ProcessResponse(HttpResponseMessage response, CancellationToken cancellationToken) => response;
     }
 }
