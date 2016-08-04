@@ -3,6 +3,7 @@
     using System.Linq;
     using System.Net.Http;
     using System.Security;
+    using System.Security.Cryptography;
     using System.Threading;
     using System.Threading.Tasks;
     using Security.HMAC;
@@ -32,7 +33,7 @@
         public async void custom_headers_are_added_to_request()
         {
             using (InspectionMessageHandler inspector = new InspectionMessageHandler())
-            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HMAC256SigningAlgorithm()))
+            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
             using (HttpClient client = new HttpClient(hmacHandler))
             {
                 await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/foo"));
@@ -48,7 +49,7 @@
         public async void authorization_header_is_set_with_correct_schema()
         {
             using (InspectionMessageHandler inspector = new InspectionMessageHandler())
-            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HMAC256SigningAlgorithm()))
+            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
             using (HttpClient client = new HttpClient(hmacHandler))
             {
                 await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/foo"));
@@ -63,7 +64,7 @@
         public async void authorization_header_parameter_is_not_null()
         {
             using (InspectionMessageHandler inspector = new InspectionMessageHandler())
-            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HMAC256SigningAlgorithm()))
+            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
             using (HttpClient client = new HttpClient(hmacHandler))
             {
                 await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/foo"));

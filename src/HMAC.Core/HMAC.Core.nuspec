@@ -1,0 +1,14 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Security.HMAC.Core</id>
+        <title>HMAC Security</title>
+        <version>1.0.0</version>
+        <authors>Valdis Zobēla</authors>
+        <owners>Valdis Zobēla</owners>
+        <description>Implementation of HMAC based security mechanisms for OWIN, ASP.NET and HttpClient.</description>
+    </metadata>
+    <files>
+        <file src="bin\release\Security.HMAC.Core.dll" target="lib\net451" />
+    </files>
+</package>

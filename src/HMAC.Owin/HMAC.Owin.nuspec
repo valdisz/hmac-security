@@ -1,17 +1,18 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
-        <id>Security.HMAC</id>
+        <id>Security.HMAC.Owin</id>
         <title>HMAC Security</title>
         <version>1.0.0</version>
         <authors>Valdis Zobēla</authors>
         <owners>Valdis Zobēla</owners>
-        <description>Implementation of HMAC based security mechanisms for HttpClient.</description>
+        <description>Implementation of HMAC based security mechanisms for OWIN.</description>
         <dependencies>
+            <dependency id="Microsoft.Owin" version="[3.0.0,)" />
             <dependency id="Security.HMAC.Core" version="[1.0.0,)" />
         </dependencies>
     </metadata>
     <files>
-        <file src="bin\release\Security.HMAC.dll" target="lib\net451" />
+        <file src="bin\release\Security.HMAC.Owin.dll" target="lib\net451" />
     </files>
 </package>

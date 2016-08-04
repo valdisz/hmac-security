@@ -1,6 +1,7 @@
 ﻿namespace Tests
 {
     using System.Security;
+    using System.Security.Cryptography;
     using Security.HMAC;
     using Xunit;
 
@@ -11,8 +12,8 @@
         {
             const string content = "qwerty123";
             SecureString secret = "foobar".ToSecureString();
-            HMAC256SigningAlgorithm a1 = new HMAC256SigningAlgorithm();
-            HMAC256SigningAlgorithm a2 = new HMAC256SigningAlgorithm();
+            HmacSigningAlgorithm a1 = new HmacSigningAlgorithm(sb => new HMACSHA256(sb));
+            HmacSigningAlgorithm a2 = new HmacSigningAlgorithm(sb => new HMACSHA256(sb));
 
             var sign1 = a1.Sign(secret, content);
             var sign2 = a2.Sign(secret, content);

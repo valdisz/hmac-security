@@ -5,9 +5,16 @@ namespace Security.HMAC
     using System.Security.Cryptography;
     using System.Text;
 
-    public sealed class HMAC256SigningAlgorithm : ISigningAlgorithm
+    public delegate HMAC HmacAlgorithmFactory(byte[] secretBytes);
+
+    public sealed class HmacSigningAlgorithm : ISigningAlgorithm
     {
-        public static readonly ISigningAlgorithm Instance = new HMAC256SigningAlgorithm();
+        private readonly HmacAlgorithmFactory algorithmFactory;
+
+        public HmacSigningAlgorithm(HmacAlgorithmFactory algorithmFactory)
+        {
+            this.algorithmFactory = algorithmFactory;
+        }
 
         public string Sign(SecureString secret, string content)
         {
@@ -15,7 +22,7 @@ namespace Security.HMAC
             byte[] secretBytes = secret.ToByteArray(Encoding.UTF8);
 
             byte[] signatureBytes;
-            using (var hmac = new HMACSHA256(secretBytes))
+            using (var hmac = algorithmFactory(secretBytes))
             {
                 signatureBytes = hmac.ComputeHash(contentBytes);
             }
