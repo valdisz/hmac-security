@@ -8,13 +8,13 @@ namespace Security.HMAC
     using System.Threading;
     using System.Threading.Tasks;
 
-    public abstract class HMACHandler : DelegatingHandler
+    public abstract class HMACServerHandler : DelegatingHandler
     {
         private readonly TimeSpan tolerance;
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
 
-        public HMACHandler(
+        public HMACServerHandler(
             IAppSecretRepository appSecretRepository,
             ISigningAlgorithm signingAlgorithm,
             TimeSpan? tolerance = null)

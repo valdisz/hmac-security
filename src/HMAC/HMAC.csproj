@@ -53,8 +53,8 @@
   <ItemGroup>
     <Compile Include="CannonicalRepresentationBuilder.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="HMACMessageHandler.cs" />
-    <Compile Include="HMACHandler.cs" />
+    <Compile Include="HMACClientHandler.cs" />
+    <Compile Include="HMACServerHandler.cs" />
     <Compile Include="HMACMiddleware.cs" />
     <Compile Include="IAppSecretRepository.cs" />
     <Compile Include="ISigningAlgorithm.cs" />

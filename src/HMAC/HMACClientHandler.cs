@@ -6,13 +6,13 @@ namespace Security.HMAC
     using System.Security;
     using System.Threading;
 
-    public sealed class HMACMessageHandler : MessageProcessingHandler
+    public sealed class HMACClientHandler : MessageProcessingHandler
     {
         private readonly string appId;
         private readonly SecureString secret;
         private readonly ISigningAlgorithm signingAlgorithm;
 
-        public HMACMessageHandler(HttpMessageHandler innerHandler, string appId, SecureString secret, ISigningAlgorithm signingAlgorithm)
+        public HMACClientHandler(HttpMessageHandler innerHandler, string appId, SecureString secret, ISigningAlgorithm signingAlgorithm)
             : base(innerHandler)
         {
             this.appId = appId;
