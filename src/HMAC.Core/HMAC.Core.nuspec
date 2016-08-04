@@ -6,7 +6,7 @@
         <version>1.0.0</version>
         <authors>Valdis Zobēla</authors>
         <owners>Valdis Zobēla</owners>
-        <description>Implementation of HMAC based security mechanisms for OWIN, ASP.NET and HttpClient.</description>
+        <description>Contracts of Security.HMAC.</description>
     </metadata>
     <files>
         <file src="bin\release\Security.HMAC.Core.dll" target="lib\net451" />
