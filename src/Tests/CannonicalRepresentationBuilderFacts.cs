@@ -18,9 +18,9 @@ namespace Tests
             var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
-            var repr = builder.BuildRepresentation("none", "appid", "method", "ct", null, date, host);
+            var repr = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", null, date, host);
 
-            Assert.Equal($"none|appid|method|ct|{ticks}|{host.ToString().ToLowerInvariant()}", repr);
+            Assert.Equal($"none|appid|method|ct|accepts|{ticks}|{host.ToString().ToLowerInvariant()}", repr);
         }
 
         [Fact]
@@ -38,8 +38,8 @@ namespace Tests
                 hash = md5.ComputeHash(Encoding.UTF8.GetBytes("foobar"));
             }
 
-            var repr1 = builder.BuildRepresentation("none", "appid", "method", "ct", null, date, host);
-            var repr2 = builder.BuildRepresentation("none", "appid", "method", "ct", hash, date, host);
+            var repr1 = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", null, date, host);
+            var repr2 = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", hash, date, host);
 
             Assert.True(repr2.Length > repr1.Length);
         }

@@ -48,6 +48,7 @@
                     appId,
                     req.Method,
                     req.ContentType,
+                    req.Accept,
                     Convert.FromBase64String(h.Get(Headers.ContentMD5)),
                     date,
                     req.Uri);

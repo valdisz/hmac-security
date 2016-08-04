@@ -47,6 +47,7 @@ namespace Security.HMAC
                     appId,
                     req.Method.Method,
                     req.Content.Headers.ContentType.MediaType,
+                    string.Join(";", req.Headers.Accept),
                     req.Content.Headers.ContentMD5,
                     date,
                     req.RequestUri);

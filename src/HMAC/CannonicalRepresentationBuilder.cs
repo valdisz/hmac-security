@@ -1,7 +1,6 @@
 namespace Security.HMAC
 {
     using System;
-    using System.Linq;
 
     internal sealed class CannonicalRepresentationBuilder
     {
@@ -10,24 +9,25 @@ namespace Security.HMAC
             string appId,
             string method,
             string contentType,
+            string accepts,
             byte[] contentMD5,
             DateTimeOffset date,
             Uri uri)
         {
+            if (nonce == null) throw new ArgumentNullException(nameof(nonce));
+            if (appId == null) throw new ArgumentNullException(nameof(appId));
+            if (method == null) throw new ArgumentNullException(nameof(method));
+
             string[] content =
             {
                 nonce,
                 appId,
                 method,
                 contentType,
+                accepts,
                 Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString(),
                 uri.ToString().ToLowerInvariant()
             };
-
-            if (content.Any(string.IsNullOrWhiteSpace))
-            {
-                return null;
-            }
 
             var representation = string.Join("|", content);
             if ((contentMD5?.Length ?? 0) != 0)

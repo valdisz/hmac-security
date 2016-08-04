@@ -5,22 +5,22 @@ namespace Security.HMAC
     using System.Net.Http.Headers;
     using System.Security;
     using System.Threading;
-    using System.Threading.Tasks;
 
-    public sealed class HMACClientHandler : HttpClientHandler
+    public sealed class HMACMessageHandler : MessageProcessingHandler
     {
         private readonly string appId;
         private readonly SecureString secret;
         private readonly ISigningAlgorithm signingAlgorithm;
 
-        public HMACClientHandler(string appId, SecureString secret, ISigningAlgorithm signingAlgorithm)
+        public HMACMessageHandler(HttpMessageHandler innerHandler, string appId, SecureString secret, ISigningAlgorithm signingAlgorithm)
+            : base(innerHandler)
         {
             this.appId = appId;
             this.secret = secret;
             this.signingAlgorithm = signingAlgorithm;
         }
 
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        protected override HttpRequestMessage ProcessRequest(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var nonce = Guid.NewGuid().ToString("N");
             var time = DateTimeOffset.UtcNow;
@@ -30,8 +30,9 @@ namespace Security.HMAC
                 nonce,
                 appId,
                 request.Method.Method,
-                request.Content.Headers.ContentType.MediaType,
-                request.Content.Headers.ContentMD5,
+                request.Content?.Headers?.ContentType?.MediaType,
+                string.Join(";", request.Headers.Accept),
+                request.Content?.Headers?.ContentMD5,
                 time,
                 request.RequestUri);
 
@@ -42,7 +43,12 @@ namespace Security.HMAC
             request.Headers.Add(Headers.XNonce, nonce);
             request.Headers.Date = time;
 
-            return base.SendAsync(request, cancellationToken);
+            return request;
+        }
+
+        protected override HttpResponseMessage ProcessResponse(HttpResponseMessage response, CancellationToken cancellationToken)
+        {
+            return response;
         }
     }
 }
