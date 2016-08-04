@@ -9,17 +9,21 @@
     {
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
+        private readonly ITime time;
         private readonly TimeSpan tolerance;
 
         public HMACMiddleware(
+            OwinMiddleware next,
             IAppSecretRepository appSecretRepository,
             ISigningAlgorithm signingAlgorithm,
-            OwinMiddleware next,
-            TimeSpan? tolerance = null) : base(next)
+            TimeSpan? tolerance = null,
+            ITime time = null)
+            : base(next)
         {
             this.appSecretRepository = appSecretRepository;
             this.signingAlgorithm = signingAlgorithm;
             this.tolerance = tolerance ?? Constants.DefaultTolerance;
+            this.time = time ?? SystemTime.Instance;
         }
 
         public override async Task Invoke(IOwinContext context)
@@ -40,7 +44,7 @@
             if (appId != null
                 && authSchema == Schemas.HMAC
                 && authValue != null
-                && DateTimeOffset.UtcNow - date <= tolerance)
+                && time.UtcNow - date <= tolerance)
             {
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(

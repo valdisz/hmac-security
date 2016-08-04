@@ -11,18 +11,28 @@ namespace Security.HMAC
         private readonly string appId;
         private readonly SecureString secret;
         private readonly ISigningAlgorithm signingAlgorithm;
+        private readonly INonceGenerator nonceGenerator;
+        private readonly ITime time;
 
-        public HMACClientHandler(HttpMessageHandler innerHandler, string appId, SecureString secret, ISigningAlgorithm signingAlgorithm)
+        public HMACClientHandler(
+            HttpMessageHandler innerHandler,
+            string appId,
+            SecureString secret,
+            ISigningAlgorithm signingAlgorithm,
+            INonceGenerator nonceGenerator = null,
+            ITime time = null)
             : base(innerHandler)
         {
             this.appId = appId;
             this.secret = secret;
             this.signingAlgorithm = signingAlgorithm;
+            this.nonceGenerator = nonceGenerator ?? GuidNonceGenerator.Instance;
+            this.time = time ?? SystemTime.Instance;
         }
 
         protected override HttpRequestMessage ProcessRequest(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var nonce = Guid.NewGuid().ToString("N");
+            var nonce = nonceGenerator.NextNonce;
             var time = DateTimeOffset.UtcNow;
 
             var builder = new CannonicalRepresentationBuilder();
@@ -31,7 +41,7 @@ namespace Security.HMAC
                 appId,
                 request.Method.Method,
                 request.Content?.Headers?.ContentType?.MediaType,
-                string.Join(";", request.Headers.Accept),
+                string.Join("; ", request.Headers.Accept),
                 request.Content?.Headers?.ContentMD5,
                 time,
                 request.RequestUri);

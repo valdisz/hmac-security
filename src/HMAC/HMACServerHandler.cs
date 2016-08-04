@@ -8,23 +8,28 @@ namespace Security.HMAC
     using System.Threading;
     using System.Threading.Tasks;
 
-    public abstract class HMACServerHandler : DelegatingHandler
+    public class HMACServerHandler : DelegatingHandler
     {
         private readonly TimeSpan tolerance;
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
+        private readonly ITime time;
 
         public HMACServerHandler(
+            HttpMessageHandler innerHandler,
             IAppSecretRepository appSecretRepository,
             ISigningAlgorithm signingAlgorithm,
-            TimeSpan? tolerance = null)
+            TimeSpan? tolerance = null,
+            ITime time = null)
+            : base(innerHandler)
         {
             this.appSecretRepository = appSecretRepository;
             this.signingAlgorithm = signingAlgorithm;
             this.tolerance = tolerance ?? Constants.DefaultTolerance;
+            this.time = time ?? SystemTime.Instance;
         }
 
-        protected async Task<HttpResponseMessage> SendAuthorizedAsync(
+        protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
@@ -39,7 +44,7 @@ namespace Security.HMAC
             if (appId != null
                 && authSchema == Schemas.HMAC
                 && authValue != null
-                && DateTimeOffset.UtcNow - date <= tolerance)
+                && time.UtcNow - date <= tolerance)
             {
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
@@ -47,7 +52,7 @@ namespace Security.HMAC
                     appId,
                     req.Method.Method,
                     req.Content.Headers.ContentType.MediaType,
-                    string.Join(";", req.Headers.Accept),
+                    string.Join("; ", req.Headers.Accept),
                     req.Content.Headers.ContentMD5,
                     date,
                     req.RequestUri);
@@ -71,13 +76,5 @@ namespace Security.HMAC
                 }
             };
         }
-
-        protected Task<HttpResponseMessage> SendUnauthorizedAsync(
-            HttpRequestMessage request,
-            CancellationToken cancellationToken) => base.SendAsync(request, cancellationToken);
-
-        protected override Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request,
-            CancellationToken cancellationToken) => SendAuthorizedAsync(request, cancellationToken);
     }
 }
