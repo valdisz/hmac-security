@@ -5,9 +5,6 @@ namespace Security.HMAC
 
     internal sealed class CannonicalRepresentationBuilder
     {
-        private static readonly DateTimeOffset dt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-
-
         public string BuildRepresentation(
             string nonce,
             string appId,
@@ -23,7 +20,7 @@ namespace Security.HMAC
                 appId,
                 method,
                 contentType,
-                Convert.ToInt64(date.Subtract(dt).TotalSeconds).ToString(),
+                Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString(),
                 uri.ToString().ToLowerInvariant()
             };
 

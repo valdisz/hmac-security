@@ -9,15 +9,13 @@ namespace Tests
 
     public class CannonicalRepresentationBuilderFacts
     {
-        static DateTimeOffset dt = new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero);
-
         [Fact]
         public void representation_is_ordered_correctly()
         {
             CannonicalRepresentationBuilder builder = new CannonicalRepresentationBuilder();
 
             var date = new DateTimeOffset(2016, 1, 1, 1, 1, 1, 1, TimeSpan.Zero);
-            var ticks = Convert.ToInt64(date.Subtract(dt).TotalSeconds).ToString();
+            var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
             var repr = builder.BuildRepresentation("none", "appid", "method", "ct", null, date, host);
@@ -31,7 +29,7 @@ namespace Tests
             CannonicalRepresentationBuilder builder = new CannonicalRepresentationBuilder();
 
             var date = new DateTimeOffset(2016, 1, 1, 1, 1, 1, 1, TimeSpan.Zero);
-            var ticks = Convert.ToInt64(date.Subtract(dt).TotalSeconds).ToString();
+            var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
             byte[] hash;
