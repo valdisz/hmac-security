@@ -7,23 +7,22 @@
 
     public class HmacMiddleware : OwinMiddleware
     {
-        private readonly IAppSecretRepository appSecretRepository;
-        private readonly ISigningAlgorithm signingAlgorithm;
-        private readonly ITime time;
-        private readonly TimeSpan tolerance;
+        private readonly HmacMiddlewareOptions options;
 
-        public HmacMiddleware(OwinMiddleware next, ISigningAlgorithm signingAlgorithm, IAppSecretRepository appSecretRepository, ITime time = null, TimeSpan? tolerance = null)
+        public HmacMiddleware(OwinMiddleware next, HmacMiddlewareOptions options)
             : base(next)
         {
-            this.appSecretRepository = appSecretRepository;
-            this.signingAlgorithm = signingAlgorithm;
-            this.tolerance = tolerance ?? Constants.DefaultTolerance;
-            this.time = time ?? SystemTime.Instance;
+            this.options = options;
         }
 
         public override async Task Invoke(IOwinContext context)
         {
-            if (RequestTools.Validate(context.Request, signingAlgorithm, appSecretRepository, time, tolerance))
+            if (RequestTools.Validate(
+                context.Request,
+                options.Algorithm,
+                options.AppSecretRepository,
+                options.Time,
+                options.Tolerance))
             {
                 await Next.Invoke(context);
             }

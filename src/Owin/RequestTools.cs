@@ -6,7 +6,7 @@ namespace Security.HMAC
 
     internal static class RequestTools
     {
-        internal static bool Validate(IOwinRequest req, ISigningAlgorithm signingAlgorithm, IAppSecretRepository appSecretRepository, ITime time, TimeSpan tolerance)
+        internal static bool Validate(IOwinRequest req, ISigningAlgorithm algorithm, IAppSecretRepository appSecretRepository, ITime time, TimeSpan tolerance)
         {
             var h = req.Headers;
 
@@ -40,7 +40,7 @@ namespace Security.HMAC
                 SecureString secret;
                 if (content != null && (secret = appSecretRepository.GetSecret(appId)) != null)
                 {
-                    var signature = signingAlgorithm.Sign(secret, content);
+                    var signature = algorithm.Sign(secret, content);
                     if (authValue == signature)
                     {
                         return true;

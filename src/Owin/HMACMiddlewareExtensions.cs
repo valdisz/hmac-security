@@ -8,7 +8,7 @@ namespace Security.HMAC
         {
             app.Use<HmacMiddleware>(
                 options.AppSecretRepository,
-                options.SigningAlgorithm,
+                options.Algorithm,
                 options.Tolerance,
                 options.Time);
         }
