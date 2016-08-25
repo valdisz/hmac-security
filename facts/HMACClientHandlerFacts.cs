@@ -24,7 +24,7 @@
         }
     }
 
-    public class HMACClientHandlerFacts
+    public class HmacClientHandlerFacts
     {
         private const string appId = "app";
         private static readonly SecureString secret = "qwerty".ToSecureString();
@@ -33,7 +33,7 @@
         public async void custom_headers_are_added_to_request()
         {
             using (InspectionMessageHandler inspector = new InspectionMessageHandler())
-            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
+            using (HmacClientHandler hmacHandler = new HmacClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
             using (HttpClient client = new HttpClient(hmacHandler))
             {
                 await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/foo"));
@@ -49,7 +49,7 @@
         public async void authorization_header_is_set_with_correct_schema()
         {
             using (InspectionMessageHandler inspector = new InspectionMessageHandler())
-            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
+            using (HmacClientHandler hmacHandler = new HmacClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
             using (HttpClient client = new HttpClient(hmacHandler))
             {
                 await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/foo"));
@@ -64,7 +64,7 @@
         public async void authorization_header_parameter_is_not_null()
         {
             using (InspectionMessageHandler inspector = new InspectionMessageHandler())
-            using (HMACClientHandler hmacHandler = new HMACClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
+            using (HmacClientHandler hmacHandler = new HmacClientHandler(inspector, appId, secret, new HmacSigningAlgorithm(sb => new HMACSHA256(sb))))
             using (HttpClient client = new HttpClient(hmacHandler))
             {
                 await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "http://localhost/foo"));

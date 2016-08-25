@@ -6,7 +6,7 @@ namespace Security.HMAC
     using System.Security;
     using System.Threading;
 
-    public sealed class HMACClientHandler : MessageProcessingHandler
+    public sealed class HmacClientHandler : MessageProcessingHandler
     {
         private readonly string appId;
         private readonly SecureString secret;
@@ -14,7 +14,7 @@ namespace Security.HMAC
         private readonly INonceGenerator nonceGenerator;
         private readonly ITime time;
 
-        public HMACClientHandler(
+        public HmacClientHandler(
             HttpMessageHandler innerHandler,
             string appId,
             SecureString secret,

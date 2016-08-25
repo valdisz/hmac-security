@@ -38,8 +38,8 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="HMACClientHandler.cs" />
-    <Compile Include="HMACServerHandler.cs" />
+    <Compile Include="HmacClientHandler.cs" />
+    <Compile Include="HmacServerHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

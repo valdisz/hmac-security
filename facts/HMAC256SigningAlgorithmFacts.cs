@@ -5,7 +5,7 @@
     using Security.HMAC;
     using Xunit;
 
-    public class HMAC256SigningAlgorithmFacts
+    public class Hmac256SigningAlgorithmFacts
     {
         [Fact]
         public void signing_the_same_content_with_the_same_key_produces_identical_results()
