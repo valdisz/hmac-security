@@ -2,7 +2,7 @@ namespace Security.HMAC
 {
     using System;
 
-    internal static class Constants
+    public static class Constants
     {
         public static readonly TimeSpan DefaultTolerance = TimeSpan.FromSeconds(3);
 

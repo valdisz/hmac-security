@@ -2,7 +2,7 @@ namespace Security.HMAC
 {
     using System;
 
-    internal sealed class CannonicalRepresentationBuilder
+    public sealed class CannonicalRepresentationBuilder
     {
         public string BuildRepresentation(
             string nonce,

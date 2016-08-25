@@ -9,8 +9,6 @@
     <Import_RootNamespace>HMAC.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)CannonicalRepresentationBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GuidNonceGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SystemTime.cs" />
   </ItemGroup>

@@ -36,6 +36,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CannonicalRepresentationBuilder.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="Headers.cs" />
     <Compile Include="HmacSigningAlgorithm.cs" />
     <Compile Include="IAppSecretRepository.cs" />
