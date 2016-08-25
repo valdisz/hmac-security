@@ -2,7 +2,7 @@ namespace Security.HMAC
 {
     using System;
 
-    public class HMACMiddlewareSettings
+    public class HmacMiddlewareOptions
     {
         public IAppSecretRepository AppSecretRepository { get; set; }
         public ISigningAlgorithm SigningAlgorithm { get; set; }
@@ -10,7 +10,7 @@ namespace Security.HMAC
         public ITime Time { get; set; }
         public MapUserClaimsDelegate MapUserClaims { get; set; }
 
-        public HMACMiddlewareSettings(IAppSecretRepository appSecretRepository, ISigningAlgorithm signingAlgorithm)
+        public HmacMiddlewareOptions(IAppSecretRepository appSecretRepository, ISigningAlgorithm signingAlgorithm)
         {
             AppSecretRepository = appSecretRepository;
             SigningAlgorithm = signingAlgorithm;

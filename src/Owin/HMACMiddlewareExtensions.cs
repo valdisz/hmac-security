@@ -2,15 +2,20 @@ namespace Security.HMAC
 {
     using Owin;
 
-    public static class HMACMiddlewareExtensions
+    public static class HmacMiddlewareExtensions
     {
-        public static void UseHMAC(this IAppBuilder app, HMACMiddlewareSettings settings)
+        public static void UseHmac(this IAppBuilder app, HmacMiddlewareOptions options)
         {
-            app.Use<HMACMiddleware>(
-                settings.AppSecretRepository,
-                settings.SigningAlgorithm,
-                settings.Tolerance,
-                settings.Time);
+            app.Use<HmacMiddleware>(
+                options.AppSecretRepository,
+                options.SigningAlgorithm,
+                options.Tolerance,
+                options.Time);
+        }
+
+        public static void UseHmacAuthentication(this IAppBuilder app, HmacAuthenticationOptions options)
+        {
+            app.Use<HmacAuthenticationMiddleware>(options);
         }
     }
 }

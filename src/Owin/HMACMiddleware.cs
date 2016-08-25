@@ -5,19 +5,14 @@
     using System.Threading.Tasks;
     using Microsoft.Owin;
 
-    public class HMACMiddleware : OwinMiddleware
+    public class HmacMiddleware : OwinMiddleware
     {
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
         private readonly ITime time;
         private readonly TimeSpan tolerance;
 
-        public HMACMiddleware(
-            OwinMiddleware next,
-            IAppSecretRepository appSecretRepository,
-            ISigningAlgorithm signingAlgorithm,
-            TimeSpan? tolerance = null,
-            ITime time = null)
+        public HmacMiddleware(OwinMiddleware next, ISigningAlgorithm signingAlgorithm, IAppSecretRepository appSecretRepository, ITime time = null, TimeSpan? tolerance = null)
             : base(next)
         {
             this.appSecretRepository = appSecretRepository;
@@ -28,49 +23,16 @@
 
         public override async Task Invoke(IOwinContext context)
         {
-            var req = context.Request;
-            var res = context.Response;
-            var h = req.Headers;
-
-            var appId = h.Get(Headers.XAppId);
-            var auth = h.Get(Headers.Authorization)?.Split(' ');
-            var authSchema = auth?.Length == 2 ? auth[0] : null;
-            var authValue = auth?.Length == 2 ? auth[1] : null;
-            DateTimeOffset date =
-                DateTimeOffset.TryParse(h.Get(Headers.Date), out date)
-                    ? date
-                    : DateTimeOffset.MinValue;
-
-            if (appId != null
-                && authSchema == Schemas.HMAC
-                && authValue != null
-                && time.UtcNow - date <= tolerance)
+            if (RequestTools.Validate(context.Request, signingAlgorithm, appSecretRepository, time, tolerance))
             {
-                var builder = new CannonicalRepresentationBuilder();
-                var content = builder.BuildRepresentation(
-                    h.Get(Headers.XNonce),
-                    appId,
-                    req.Method,
-                    req.ContentType,
-                    req.Accept,
-                    Convert.FromBase64String(h.Get(Headers.ContentMD5)),
-                    date,
-                    req.Uri);
-
-                SecureString secret;
-                if (content != null && (secret = appSecretRepository.GetSecret(appId)) != null)
-                {
-                    var signature = signingAlgorithm.Sign(secret, content);
-                    if (authValue == signature)
-                    {
-                        await Next.Invoke(context);
-                        return;
-                    }
-                }
+                await Next.Invoke(context);
             }
-
-            res.StatusCode = 401;
-            res.Headers.Append(Headers.WWWAuthenticate, Schemas.HMAC);
+            else
+            {
+                var res = context.Response;
+                res.StatusCode = 401;
+                res.Headers.Append(Headers.WWWAuthenticate, Schemas.HMAC);
+            }
         }
     }
 }
