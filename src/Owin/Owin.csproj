@@ -45,6 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HMACMiddleware.cs" />
+    <Compile Include="HMACMiddlewareExtensions.cs" />
+    <Compile Include="HMACMiddlewareSettings.cs" />
+    <Compile Include="MapUserClaimsDelegate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
