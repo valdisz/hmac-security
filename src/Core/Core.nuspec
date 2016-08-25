@@ -9,6 +9,6 @@
         <description>Contracts of Security.HMAC.</description>
     </metadata>
     <files>
-        <file src="bin\release\Security.HMAC.Core.dll" target="lib\net451" />
+        <file src="bin\release\Security.HMAC.Core.dll" target="lib\net45" />
     </files>
 </package>
