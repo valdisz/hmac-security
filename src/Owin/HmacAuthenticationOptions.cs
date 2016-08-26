@@ -5,12 +5,12 @@
 
     public class HmacAuthenticationOptions : AuthenticationOptions
     {
-        public HmacAuthenticationOptions(ISigningAlgorithm algorithm, IAppSecretRepository appSecretRepository, string signInAsAuthenticationType = null)
+        public HmacAuthenticationOptions(ISigningAlgorithm algorithm, IAppSecretRepository appSecretRepository, string signInAsAuthenticationType = Schemas.HMAC)
             : base(Schemas.HMAC)
         {
             Algorithm = algorithm;
             AppSecretRepository = appSecretRepository;
-            SignInAsAuthenticationType = signInAsAuthenticationType ?? Schemas.HMAC;
+            SignInAsAuthenticationType = signInAsAuthenticationType;
         }
 
         public ISigningAlgorithm Algorithm { get; set; }
