@@ -25,7 +25,7 @@ namespace Security.HMAC
                 method,
                 contentType,
                 accepts,
-                Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString(),
+                date.ToString("R"),
                 uri.ToString().ToLowerInvariant()
             };
 

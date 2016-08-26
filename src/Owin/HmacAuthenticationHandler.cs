@@ -30,7 +30,7 @@
                     claims = MergeClaims(claims, Options.MapClaims(appId, Request));
                 }
 
-                ticket = new AuthenticationTicket(new ClaimsIdentity(claims), new AuthenticationProperties());
+                ticket = new AuthenticationTicket(new ClaimsIdentity(claims, Options.SignInAsAuthenticationType), new AuthenticationProperties());
             }
 
             return Task.FromResult(ticket);
