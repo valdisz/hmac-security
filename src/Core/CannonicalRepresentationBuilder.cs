@@ -18,6 +18,9 @@ namespace Security.HMAC
             if (appId == null) throw new ArgumentNullException(nameof(appId));
             if (method == null) throw new ArgumentNullException(nameof(method));
 
+            // Trim milliseconds for date
+            date = date.AddTicks(-(date.Ticks % TimeSpan.TicksPerSecond));
+
             string[] content =
             {
                 nonce,
