@@ -26,6 +26,7 @@ namespace Security.HMAC
                 && authValue != null
                 && time.UtcNow - date <= tolerance)
             {
+                var contentMd5 = h.Get(Headers.ContentMD5);
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
                     nonce,
@@ -33,7 +34,7 @@ namespace Security.HMAC
                     req.Method,
                     req.ContentType,
                     req.Accept,
-                    Convert.FromBase64String(h.Get(Headers.ContentMD5)),
+                    contentMd5 == null ? null : Convert.FromBase64String(contentMd5),
                     date,
                     req.Uri);
 
