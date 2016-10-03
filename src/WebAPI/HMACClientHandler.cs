@@ -40,8 +40,8 @@ namespace Security.HMAC
                 nonce,
                 appId,
                 request.Method.Method,
-                request.Content?.Headers?.ContentType?.MediaType,
-                string.Join("; ", request.Headers.Accept),
+                request.Content?.Headers?.ContentType?.ToString(),
+                string.Join(", ", request.Headers.Accept),
                 request.Content?.Headers?.ContentMD5,
                 time,
                 request.RequestUri);
