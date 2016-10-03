@@ -51,8 +51,8 @@ namespace Security.HMAC
                     h.GetValues(Headers.XNonce).FirstOrDefault(),
                     appId,
                     req.Method.Method,
-                    req.Content.Headers.ContentType.MediaType,
-                    string.Join("; ", req.Headers.Accept),
+                    req.Content.Headers.ContentType.ToString(),
+                    string.Join(", ", req.Headers.Accept),
                     req.Content.Headers.ContentMD5,
                     date,
                     req.RequestUri);
