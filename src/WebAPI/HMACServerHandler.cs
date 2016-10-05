@@ -13,18 +13,35 @@ namespace Security.HMAC
         private readonly TimeSpan tolerance;
         private readonly IAppSecretRepository appSecretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
+        private readonly bool mixedAuthMode;
         private readonly ITime time;
+
+        public HmacServerHandler(
+            IAppSecretRepository appSecretRepository,
+            ISigningAlgorithm signingAlgorithm,
+            bool mixedAuthMode = false,
+            TimeSpan? tolerance = null,
+            ITime time = null)
+        {
+            this.appSecretRepository = appSecretRepository;
+            this.signingAlgorithm = signingAlgorithm;
+            this.mixedAuthMode = mixedAuthMode;
+            this.tolerance = tolerance ?? Constants.DefaultTolerance;
+            this.time = time ?? SystemTime.Instance;
+        }
 
         public HmacServerHandler(
             HttpMessageHandler innerHandler,
             IAppSecretRepository appSecretRepository,
             ISigningAlgorithm signingAlgorithm,
+            bool mixedAuthMode = false,
             TimeSpan? tolerance = null,
             ITime time = null)
             : base(innerHandler)
         {
             this.appSecretRepository = appSecretRepository;
             this.signingAlgorithm = signingAlgorithm;
+            this.mixedAuthMode = mixedAuthMode;
             this.tolerance = tolerance ?? Constants.DefaultTolerance;
             this.time = time ?? SystemTime.Instance;
         }
@@ -36,13 +53,18 @@ namespace Security.HMAC
             var req = request;
             var h = req.Headers;
 
-            var appId = h.GetValues(Headers.XAppId).First();
-            var authSchema = h.Authorization?.Scheme;
+            if (mixedAuthMode && h.Authorization?.Scheme != Schemas.HMAC)
+            {
+                return await base.SendAsync(request, cancellationToken);
+            }
+
+            var appId = h.Contains(Headers.XAppId)
+                ? h.GetValues(Headers.XAppId).FirstOrDefault()
+                : null;
             var authValue = h.Authorization?.Parameter;
             var date = h.Date ?? DateTimeOffset.MinValue;
 
             if (appId != null
-                && authSchema == Schemas.HMAC
                 && authValue != null
                 && time.UtcNow - date <= tolerance)
             {
@@ -51,7 +73,7 @@ namespace Security.HMAC
                     h.GetValues(Headers.XNonce).FirstOrDefault(),
                     appId,
                     req.Method.Method,
-                    req.Content.Headers.ContentType.ToString(),
+                    req.Content.Headers.ContentType?.ToString(),
                     string.Join(", ", req.Headers.Accept),
                     req.Content.Headers.ContentMD5,
                     date,
