@@ -16,21 +16,26 @@ namespace Security.HMAC
             this.algorithmFactory = algorithmFactory;
         }
 
-        public string Sign(SecureString secret, string content)
+        public byte[] Sign(SecureString secret, byte[] content)
         {
-            byte[] contentBytes = Encoding.UTF8.GetBytes(content);
             byte[] secretBytes = secret.ToByteArray(Encoding.UTF8);
 
-            byte[] signatureBytes;
+            byte[] signature;
             using (var hmac = algorithmFactory(secretBytes))
             {
-                signatureBytes = hmac.ComputeHash(contentBytes);
+                signature = hmac.ComputeHash(content);
             }
 
             // we need to remove unencrypted secret from memory
             Array.Clear(secretBytes, 0, secretBytes.Length);
 
-            return Convert.ToBase64String(signatureBytes);
+            return signature;
+        }
+
+        public bool Verify(SecureString secret, byte[] content, byte[] signature)
+        {
+            var refSignature = Sign(secret, content);
+            return MemTools.Equals(refSignature, signature);
         }
     }
 }

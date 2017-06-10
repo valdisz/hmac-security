@@ -40,7 +40,7 @@
 
                 var req = inspector.LastRequest;
 
-                Assert.Equal(appId, req.Headers.GetValues(Headers.XAppId).First());
+                Assert.Equal(appId, req.Headers.GetValues(Headers.XClient).First());
                 Assert.False(string.IsNullOrWhiteSpace(req.Headers.GetValues(Headers.XNonce).FirstOrDefault()));
             }
         }

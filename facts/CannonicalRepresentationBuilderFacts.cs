@@ -1,7 +1,6 @@
-﻿using System;
-
-namespace Tests
+﻿namespace Tests
 {
+    using System;
     using System.Security.Cryptography;
     using System.Text;
     using Security.HMAC;
@@ -18,9 +17,9 @@ namespace Tests
             var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
-            var repr = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", null, date, host);
+            var repr = builder.BuildRepresentation("none", "appid", "method", "ct", new [] { "accepts" }, null, date, host);
 
-            Assert.Equal($"none|appid|method|ct|accepts|{ticks}|{host.ToString().ToLowerInvariant()}", repr);
+            Assert.Equal($"none|appid|method|ct|accepts|{ticks}|{host.ToString().ToLowerInvariant()}|", repr);
         }
 
         [Fact]
@@ -29,7 +28,6 @@ namespace Tests
             CannonicalRepresentationBuilder builder = new CannonicalRepresentationBuilder();
 
             var date = new DateTimeOffset(2016, 1, 1, 1, 1, 1, 1, TimeSpan.Zero);
-            var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
             byte[] hash;
@@ -38,8 +36,8 @@ namespace Tests
                 hash = md5.ComputeHash(Encoding.UTF8.GetBytes("foobar"));
             }
 
-            var repr1 = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", null, date, host);
-            var repr2 = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", hash, date, host);
+            var repr1 = builder.BuildRepresentation("none", "appid", "method", "ct", new [] { "accepts" }, null, date, host);
+            var repr2 = builder.BuildRepresentation("none", "appid", "method", "ct", new[] { "accepts" }, hash, date, host);
 
             Assert.True(repr2.Length > repr1.Length);
         }

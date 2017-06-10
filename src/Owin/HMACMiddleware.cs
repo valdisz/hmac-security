@@ -1,7 +1,5 @@
 ﻿namespace Security.HMAC
 {
-    using System;
-    using System.Security;
     using System.Threading.Tasks;
     using Microsoft.Owin;
 
@@ -15,23 +13,23 @@
             this.options = options;
         }
 
-        public override async Task Invoke(IOwinContext context)
+        public override Task Invoke(IOwinContext context)
         {
-            if (RequestTools.Validate(
+            if (!RequestTools.Validate(
                 context.Request,
                 options.Algorithm,
-                options.AppSecretRepository,
+                options.SecretRepository,
                 options.Time,
-                options.Tolerance))
-            {
-                await Next.Invoke(context);
-            }
-            else
+                options.ClockSkew))
             {
                 var res = context.Response;
                 res.StatusCode = 401;
-                res.Headers.Append(Headers.WWWAuthenticate, Schemas.HMAC);
+                res.Headers.Append(Headers.WWWAuthenticate, Schemas.Bearer);
+
+                return Task.CompletedTask;
             }
+
+            return Next.Invoke(context);
         }
     }
 }

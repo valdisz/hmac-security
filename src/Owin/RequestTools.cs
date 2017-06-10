@@ -2,47 +2,54 @@ namespace Security.HMAC
 {
     using System;
     using System.Security;
+    using System.Text;
     using Microsoft.Owin;
 
     internal static class RequestTools
     {
-        internal static bool Validate(IOwinRequest req, ISigningAlgorithm algorithm, IAppSecretRepository appSecretRepository, ITime time, TimeSpan tolerance)
+        internal static bool Validate(IOwinRequest req, ISigningAlgorithm algorithm, ISecretRepository secretRepository, ITime time, TimeSpan clockSkew)
         {
             var h = req.Headers;
 
-            var appId = GetAppId(req);
+            var client = GetClient(req);
             var nonce = GetNonce(req);
 
             var auth = h.Get(Headers.Authorization)?.Split(' ');
-            var authSchema = auth?.Length == 2 ? auth[0] : null;
-            var authValue = auth?.Length == 2 ? auth[1] : null;
+            var scheme = auth?.Length == 2 ? auth[0] : null;
+            var token = auth?.Length == 2 ? auth[1] : null;
             DateTimeOffset date =
                 DateTimeOffset.TryParse(h.Get(Headers.Date), out date)
                     ? date
                     : DateTimeOffset.MinValue;
 
-            if (appId != null
-                && authSchema == Schemas.HMAC
-                && authValue != null
-                && time.UtcNow - date <= tolerance)
+            if (client != null
+                && nonce != null
+                && scheme == Schemas.Bearer
+                && token != null
+                && time.UtcNow - date <= clockSkew)
             {
                 var contentMd5 = h.Get(Headers.ContentMD5);
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
                     nonce,
-                    appId,
+                    client,
                     req.Method,
                     req.ContentType,
-                    req.Accept,
+                    req.Accept.Split(','),
                     contentMd5 == null ? null : Convert.FromBase64String(contentMd5),
                     date,
                     req.Uri);
 
-                SecureString secret;
-                if (content != null && (secret = appSecretRepository.GetSecret(appId)) != null)
+
+                SecureString secret = secretRepository.GetSecret(client);
+                if (secret != null)
                 {
-                    var signature = algorithm.Sign(secret, content);
-                    if (authValue == signature)
+                    var isTokenValid = algorithm.Verify(
+                        secret,
+                        Encoding.UTF8.GetBytes(content),
+                        Convert.FromBase64String(token));
+
+                    if (isTokenValid)
                     {
                         return true;
                     }
@@ -52,7 +59,7 @@ namespace Security.HMAC
             return false;
         }
 
-        public static string GetAppId(IOwinRequest req) => req.Headers.Get(Headers.XAppId);
+        public static string GetClient(IOwinRequest req) => req.Headers.Get(Headers.XClient);
 
         public static string GetNonce(IOwinRequest req) => req.Headers.Get(Headers.XNonce);
     }

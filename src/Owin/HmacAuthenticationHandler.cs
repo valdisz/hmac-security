@@ -20,9 +20,9 @@
                 Options.Algorithm,
                 Options.AppSecretRepository,
                 Options.Time,
-                Options.Tolerance))
+                Options.ClockSkew))
             {
-                var appId = RequestTools.GetAppId(Request);
+                var appId = RequestTools.GetClient(Request);
 
                 var claims = MapDefaultClaims(appId, Request);
                 if (Options.MapClaims != null)

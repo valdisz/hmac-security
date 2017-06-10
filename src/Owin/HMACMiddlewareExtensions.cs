@@ -7,9 +7,9 @@ namespace Security.HMAC
         public static void UseHmac(this IAppBuilder app, HmacMiddlewareOptions options)
         {
             app.Use<HmacMiddleware>(
-                options.AppSecretRepository,
+                options.SecretRepository,
                 options.Algorithm,
-                options.Tolerance,
+                options.ClockSkew,
                 options.Time);
         }
 

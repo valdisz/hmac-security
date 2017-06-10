@@ -4,15 +4,15 @@ namespace Security.HMAC
 
     public class HmacMiddlewareOptions
     {
-        public IAppSecretRepository AppSecretRepository { get; set; }
+        public ISecretRepository SecretRepository { get; set; }
         public ISigningAlgorithm Algorithm { get; set; }
-        public TimeSpan Tolerance { get; set; } = Constants.DefaultTolerance;
+        public TimeSpan ClockSkew { get; set; } = Constants.DefaultClockSkew;
         public ITime Time { get; set; } = SystemTime.Instance;
         public MapUserClaimsDelegate MapUserClaims { get; set; }
 
-        public HmacMiddlewareOptions(IAppSecretRepository appSecretRepository, ISigningAlgorithm algorithm)
+        public HmacMiddlewareOptions(ISecretRepository secretRepository, ISigningAlgorithm algorithm)
         {
-            AppSecretRepository = appSecretRepository;
+            SecretRepository = secretRepository;
             Algorithm = algorithm;
         }
     }

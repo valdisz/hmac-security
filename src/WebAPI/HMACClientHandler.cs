@@ -1,26 +1,29 @@
 namespace Security.HMAC
 {
+    using System;
+    using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Security;
+    using System.Text;
     using System.Threading;
 
     public sealed class HmacClientHandler : MessageProcessingHandler
     {
-        private readonly string appId;
+        private readonly string client;
         private readonly SecureString secret;
         private readonly ISigningAlgorithm signingAlgorithm;
         private readonly INonceGenerator nonceGenerator;
         private readonly ITime time;
 
         public HmacClientHandler(
-            string appId,
+            string client,
             SecureString secret,
             ISigningAlgorithm signingAlgorithm,
             INonceGenerator nonceGenerator = null,
             ITime time = null)
         {
-            this.appId = appId;
+            this.client = client;
             this.secret = secret;
             this.signingAlgorithm = signingAlgorithm;
             this.nonceGenerator = nonceGenerator ?? GuidNonceGenerator.Instance;
@@ -29,14 +32,14 @@ namespace Security.HMAC
 
         public HmacClientHandler(
             HttpMessageHandler innerHandler,
-            string appId,
+            string client,
             SecureString secret,
             ISigningAlgorithm signingAlgorithm,
             INonceGenerator nonceGenerator = null,
             ITime time = null)
             : base(innerHandler)
         {
-            this.appId = appId;
+            this.client = client;
             this.secret = secret;
             this.signingAlgorithm = signingAlgorithm;
             this.nonceGenerator = nonceGenerator ?? GuidNonceGenerator.Instance;
@@ -45,24 +48,24 @@ namespace Security.HMAC
 
         protected override HttpRequestMessage ProcessRequest(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var nonce = nonceGenerator.NextNonce;
+            var nonce = nonceGenerator.NextNonce();
             var timestamp = time.UtcNow;
 
             var builder = new CannonicalRepresentationBuilder();
             var content = builder.BuildRepresentation(
                 nonce,
-                appId,
+                client,
                 request.Method.Method,
                 request.Content?.Headers?.ContentType?.ToString(),
-                string.Join(", ", request.Headers.Accept),
+                request.Headers.Accept.Select(x => x.ToString()).ToArray(),
                 request.Content?.Headers?.ContentMD5,
                 timestamp,
                 request.RequestUri);
 
-            var signature = signingAlgorithm.Sign(secret, content);
+            var signature = signingAlgorithm.Sign(secret, Encoding.UTF8.GetBytes(content));
 
-            request.Headers.Authorization = new AuthenticationHeaderValue(Schemas.HMAC, signature);
-            request.Headers.Add(Headers.XAppId, appId);
+            request.Headers.Authorization = new AuthenticationHeaderValue(Schemas.Bearer, Convert.ToBase64String(signature));
+            request.Headers.Add(Headers.XClient, client);
             request.Headers.Add(Headers.XNonce, nonce);
             request.Headers.Date = timestamp;
 

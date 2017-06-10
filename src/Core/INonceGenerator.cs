@@ -2,6 +2,6 @@
 {
     public interface INonceGenerator
     {
-        string NextNonce { get; }
+        string NextNonce();
     }
 }

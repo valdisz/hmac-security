@@ -4,6 +4,8 @@ namespace Security.HMAC
 
     public interface ISigningAlgorithm
     {
-        string Sign(SecureString secret, string content);
+        byte[] Sign(SecureString secret, byte[] content);
+
+        bool Verify(SecureString secret, byte[] content, byte[] signature);
     }
 }

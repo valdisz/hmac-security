@@ -5,44 +5,40 @@ namespace Security.HMAC
     using System.Net;
     using System.Net.Http;
     using System.Security;
+    using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
 
     public class HmacServerHandler : DelegatingHandler
     {
-        private readonly TimeSpan tolerance;
-        private readonly IAppSecretRepository appSecretRepository;
+        private readonly TimeSpan clockSkew;
+        private readonly ISecretRepository secretRepository;
         private readonly ISigningAlgorithm signingAlgorithm;
-        private readonly bool mixedAuthMode;
         private readonly ITime time;
 
         public HmacServerHandler(
-            IAppSecretRepository appSecretRepository,
+            ISecretRepository secretRepository,
             ISigningAlgorithm signingAlgorithm,
-            bool mixedAuthMode = false,
-            TimeSpan? tolerance = null,
+            TimeSpan? clockSkew = null,
             ITime time = null)
         {
-            this.appSecretRepository = appSecretRepository;
+            this.secretRepository = secretRepository;
             this.signingAlgorithm = signingAlgorithm;
-            this.mixedAuthMode = mixedAuthMode;
-            this.tolerance = tolerance ?? Constants.DefaultTolerance;
+            this.clockSkew = clockSkew ?? Constants.DefaultClockSkew;
             this.time = time ?? SystemTime.Instance;
         }
 
         public HmacServerHandler(
             HttpMessageHandler innerHandler,
-            IAppSecretRepository appSecretRepository,
+            ISecretRepository secretRepository,
             ISigningAlgorithm signingAlgorithm,
-            bool mixedAuthMode = false,
-            TimeSpan? tolerance = null,
+            TimeSpan? clockSkew = null,
             ITime time = null)
             : base(innerHandler)
         {
-            this.appSecretRepository = appSecretRepository;
+            this.secretRepository = secretRepository;
             this.signingAlgorithm = signingAlgorithm;
-            this.mixedAuthMode = mixedAuthMode;
-            this.tolerance = tolerance ?? Constants.DefaultTolerance;
+            this.clockSkew = clockSkew ?? Constants.DefaultClockSkew;
             this.time = time ?? SystemTime.Instance;
         }
 
@@ -53,37 +49,43 @@ namespace Security.HMAC
             var req = request;
             var h = req.Headers;
 
-            if (mixedAuthMode && h.Authorization?.Scheme != Schemas.HMAC)
-            {
-                return await base.SendAsync(request, cancellationToken);
-            }
-
-            var appId = h.Contains(Headers.XAppId)
-                ? h.GetValues(Headers.XAppId).FirstOrDefault()
+            var client = h.Contains(Headers.XClient)
+                ? h.GetValues(Headers.XClient).FirstOrDefault()
                 : null;
-            var authValue = h.Authorization?.Parameter;
+            var nonce = h.Contains(Headers.XNonce)
+                ? h.GetValues(Headers.XNonce).FirstOrDefault()
+                : null;
+            var scheme = h.Authorization?.Scheme;
+            var token = h.Authorization?.Parameter;
             var date = h.Date ?? DateTimeOffset.MinValue;
 
-            if (appId != null
-                && authValue != null
-                && time.UtcNow - date <= tolerance)
+            if (
+                client != null
+                && nonce != null
+                && scheme == Schemas.Bearer
+                && token != null
+                && time.UtcNow - date <= clockSkew)
             {
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
-                    h.GetValues(Headers.XNonce).FirstOrDefault(),
-                    appId,
+                    nonce,
+                    client,
                     req.Method.Method,
                     req.Content.Headers.ContentType?.ToString(),
-                    string.Join(", ", req.Headers.Accept),
+                    req.Headers.Accept.Select(x => x.ToString()).ToArray(),
                     req.Content.Headers.ContentMD5,
                     date,
                     req.RequestUri);
 
-                SecureString secret;
-                if (content != null && (secret = appSecretRepository.GetSecret(appId)) != null)
+                SecureString secret = secretRepository.GetSecret(client);
+                if (secret != null)
                 {
-                    var signature = signingAlgorithm.Sign(secret, content);
-                    if (authValue == signature)
+                    var isTokenValid = signingAlgorithm.Verify(
+                        secret,
+                        Encoding.UTF8.GetBytes(content),
+                        Convert.FromBase64String(token));
+
+                    if (isTokenValid)
                     {
                         return await base.SendAsync(request, cancellationToken);
                     }
@@ -94,7 +96,7 @@ namespace Security.HMAC
             {
                 Headers =
                 {
-                    { Headers.WWWAuthenticate, Schemas.HMAC }
+                    { Headers.WWWAuthenticate, Schemas.Bearer }
                 }
             };
         }

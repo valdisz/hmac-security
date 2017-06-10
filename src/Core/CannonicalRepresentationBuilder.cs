@@ -1,40 +1,39 @@
 namespace Security.HMAC
 {
     using System;
+    using System.Linq;
 
     public sealed class CannonicalRepresentationBuilder
     {
         public string BuildRepresentation(
             string nonce,
-            string appId,
+            string client,
             string method,
             string contentType,
-            string accepts,
+            string[] accepts,
             byte[] contentMD5,
             DateTimeOffset date,
             Uri uri)
         {
             if (nonce == null) throw new ArgumentNullException(nameof(nonce));
-            if (appId == null) throw new ArgumentNullException(nameof(appId));
+            if (client == null) throw new ArgumentNullException(nameof(client));
             if (method == null) throw new ArgumentNullException(nameof(method));
 
             string[] content =
             {
                 nonce,
-                appId,
+                client,
                 method,
                 contentType,
-                accepts,
+                string.Join("|", accepts.Select(x => x.Trim())),
                 date.ToString("R"),
-                uri.ToString().ToLowerInvariant()
+                uri.ToString().ToLowerInvariant(),
+                (contentMD5?.Length ?? 0) > 0
+                    ? Convert.ToBase64String(contentMD5)
+                    : ""
             };
 
             var representation = string.Join("|", content);
-            if ((contentMD5?.Length ?? 0) != 0)
-            {
-                string md5 = Convert.ToBase64String(contentMD5);
-                representation += $"|{md5}";
-            }
 
             return representation;
         }

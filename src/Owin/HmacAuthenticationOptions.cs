@@ -5,18 +5,18 @@
 
     public class HmacAuthenticationOptions : AuthenticationOptions
     {
-        public HmacAuthenticationOptions(ISigningAlgorithm algorithm, IAppSecretRepository appSecretRepository, string signInAsAuthenticationType = Schemas.HMAC)
+        public HmacAuthenticationOptions(ISigningAlgorithm algorithm, ISecretRepository secretRepository, string signInAsAuthenticationType = Schemas.HMAC)
             : base(Schemas.HMAC)
         {
             Algorithm = algorithm;
-            AppSecretRepository = appSecretRepository;
+            SecretRepository = secretRepository;
             SignInAsAuthenticationType = signInAsAuthenticationType;
         }
 
         public ISigningAlgorithm Algorithm { get; set; }
-        public IAppSecretRepository AppSecretRepository { get; set; }
+        public ISecretRepository SecretRepository { get; set; }
         public ITime Time { get; set; } = SystemTime.Instance;
-        public TimeSpan Tolerance { get; set; } = Constants.DefaultTolerance;
+        public TimeSpan ClockSkew { get; set; } = Constants.DefaultClockSkew;
         public MapUserClaimsDelegate MapClaims { get; set; }
         public string SignInAsAuthenticationType { get; set; }
     }
