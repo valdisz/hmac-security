@@ -1,10 +1,9 @@
-﻿using System;
-
-namespace Tests
+﻿namespace Tests
 {
+    using Security.HMAC;
+    using System;
     using System.Security.Cryptography;
     using System.Text;
-    using Security.HMAC;
     using Xunit;
 
     public class CannonicalRepresentationBuilderFacts
@@ -15,12 +14,13 @@ namespace Tests
             CannonicalRepresentationBuilder builder = new CannonicalRepresentationBuilder();
 
             var date = new DateTimeOffset(2016, 1, 1, 1, 1, 1, 1, TimeSpan.Zero);
-            var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
             var repr = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", null, date, host);
 
-            Assert.Equal($"none|appid|method|ct|accepts|{ticks}|{host.ToString().ToLowerInvariant()}", repr);
+            Assert.Equal(
+                $"none|appid|method|ct|accepts|{date:R}|{host.GetComponents(UriComponents.AbsoluteUri, UriFormat.SafeUnescaped).ToLowerInvariant()}",
+                repr);
         }
 
         [Fact]
@@ -29,7 +29,6 @@ namespace Tests
             CannonicalRepresentationBuilder builder = new CannonicalRepresentationBuilder();
 
             var date = new DateTimeOffset(2016, 1, 1, 1, 1, 1, 1, TimeSpan.Zero);
-            var ticks = Convert.ToInt64(date.Subtract(Constants.UnixEpoch).TotalSeconds).ToString();
             var host = new Uri("http://localhost");
 
             byte[] hash;
