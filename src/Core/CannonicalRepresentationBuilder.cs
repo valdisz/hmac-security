@@ -26,7 +26,7 @@ namespace Security.HMAC
                 contentType,
                 accepts,
                 date.ToString("R"),
-                uri.GetComponents(UriComponents.AbsoluteUri, UriFormat.SafeUnescaped).ToLowerInvariant()
+                uri.GetComponents(UriComponents.AbsoluteUri, UriFormat.Unescaped).ToLowerInvariant()
             };
 
             var representation = string.Join("|", content);
