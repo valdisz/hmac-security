@@ -19,7 +19,7 @@
             var repr = builder.BuildRepresentation("none", "appid", "method", "ct", "accepts", null, date, host);
 
             Assert.Equal(
-                $"none|appid|method|ct|accepts|{date:R}|{host.GetComponents(UriComponents.AbsoluteUri, UriFormat.SafeUnescaped).ToLowerInvariant()}",
+                $"none|appid|method|ct|accepts|{date:R}|{host.GetComponents(UriComponents.AbsoluteUri, UriFormat.Unescaped).ToLowerInvariant()}",
                 repr);
         }
 
