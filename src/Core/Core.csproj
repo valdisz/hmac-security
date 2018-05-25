@@ -36,22 +36,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CannonicalRepresentationBuilder.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="Headers.cs" />
-    <Compile Include="HmacSigningAlgorithm.cs" />
-    <Compile Include="IAppSecretRepository.cs" />
-    <Compile Include="INonceGenerator.cs" />
-    <Compile Include="ISigningAlgorithm.cs" />
-    <Compile Include="ITime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schemas.cs" />
-    <Compile Include="SecureStringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Core.nuspec" />
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="..\Shared.Core\Shared.Core.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
