@@ -1,6 +1,8 @@
 namespace Security.HMAC
 {
     using System;
+    using System.Net;
+    using System.Net.Http.Headers;
     using System.Security;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Http.Extensions;
@@ -14,9 +16,12 @@ namespace Security.HMAC
             var appId = GetAppId(req);
             var nonce = GetNonce(req);
 
-            var auth = h.Get(Headers.Authorization);
-            var authSchema = auth?.Count == 2 ? auth.Value[0] : null;
-            var authValue = auth?.Count == 2 ? auth.Value[1] : null;
+            var authHeader = h.Get(Headers.Authorization);
+            var auth = authHeader.HasValue
+                ? AuthenticationHeaderValue.Parse(authHeader)
+                : null;
+            var authSchema = auth?.Scheme;
+            var authValue = auth?.Parameter;
             DateTimeOffset date =
                 DateTimeOffset.TryParse(h.Get(Headers.Date), out date)
                     ? date
@@ -28,7 +33,7 @@ namespace Security.HMAC
                 && authValue != null
                 && time.UtcNow - date <= clockSkew)
             {
-                var contentMd5 = h.Get(Headers.ContentMD5)?[0];
+                string contentMd5 = h.Get(Headers.ContentMD5);
                 var builder = new CannonicalRepresentationBuilder();
                 var content = builder.BuildRepresentation(
                     nonce,
