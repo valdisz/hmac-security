@@ -28,18 +28,19 @@ namespace Security.HMAC
             }
 
             int strLen = secStr.Length;
+            int bufferSz = encoding.GetMaxByteCount(strLen);
 
             IntPtr bytes = IntPtr.Zero;
             IntPtr str = IntPtr.Zero;
 
             try
             {
-                bytes = Marshal.AllocHGlobal(strLen);
+                bytes = Marshal.AllocHGlobal(bufferSz);
                 str = Marshal.SecureStringToBSTR(secStr);
 
                 char* chars = (char*) str.ToPointer();
                 byte* bptr = (byte*) bytes.ToPointer();
-                int len = encoding.GetBytes(chars, strLen, bptr, strLen);
+                int len = encoding.GetBytes(chars, strLen, bptr, bufferSz);
 
                 byte[] arr = new byte[len];
                 Marshal.Copy((IntPtr) bptr, arr, 0, len);
