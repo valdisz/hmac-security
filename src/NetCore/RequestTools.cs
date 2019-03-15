@@ -9,7 +9,7 @@ namespace Security.HMAC
 
     internal static class RequestTools
     {
-        internal static bool Validate(HttpRequest req, ISigningAlgorithm algorithm, IAppSecretRepository secretRepository, ITime time, TimeSpan clockSkew)
+        internal static bool Validate(HttpRequest req, ISigningAlgorithm algorithm, IAppSecretRepository secretRepository, ITime time, TimeSpan clockSkew, string requestProtocol = "https")
         {
             var h = req.Headers;
 
@@ -35,6 +35,24 @@ namespace Security.HMAC
             {
                 string contentMd5 = h.Get(Headers.ContentMD5);
                 var builder = new CannonicalRepresentationBuilder();
+
+                // Handling request possibly coming from rewrite
+                var url = h.Get(Headers.XOriginalUrl); // Original URL before rewrite
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    url = req.GetEncodedUrl(); // no rewrite, use URL from req
+                }
+                else if (!Uri.IsWellFormedUriString(url, UriKind.Absolute))
+                {
+                    // there was rewrite, and original URL is saved as relative
+                    var protocol = h.Get(Headers.XForwardedProto);
+                    if (string.IsNullOrWhiteSpace(protocol)) protocol = h.Get(Headers.XForwardedProtocol);
+                    if (string.IsNullOrWhiteSpace(protocol)) protocol = h.Get(Headers.XUrlScheme);
+                    if (string.IsNullOrWhiteSpace(protocol)) protocol = requestProtocol;
+
+                    url = $"{protocol}://{req.Host.Host}{url}";
+                }
+
                 var content = builder.BuildRepresentation(
                     nonce,
                     appId,
@@ -43,7 +61,7 @@ namespace Security.HMAC
                     req.Headers.Get("Accept"),
                     contentMd5 == null ? null : Convert.FromBase64String(contentMd5),
                     date,
-                    new Uri(req.GetEncodedUrl()));
+                    new Uri(url));
 
                 SecureString secret;
                 if (content != null && (secret = secretRepository.GetSecret(appId)) != null)
